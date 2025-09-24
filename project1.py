@@ -19,7 +19,7 @@ from sklearn.ensemble import RandomForestClassifier
 
 
 def main():
-    pure_data_set = pd.read_csv("project1ml/dataset/PhiUSIIL_Phishing_URL_Dataset.csv")
+    pure_data_set = pd.read_csv("dataset/PhiUSIIL_Phishing_URL_Dataset.csv")
 
     features = [
         "TLD",
@@ -34,8 +34,6 @@ def main():
         "NoOfAmpersandInURL",
         "NoOfOtherSpecialCharsInURL",
     ]
-
-    pandas
 
 
 def plot_correlation(data_set):
