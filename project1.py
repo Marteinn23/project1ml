@@ -18,8 +18,12 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 
 
+DROP_COLS = ["FILENAME", "URL", "Domain", "Title"]
+
+
 def main():
     pure_data_set = pd.read_csv("dataset/PhiUSIIL_Phishing_URL_Dataset.csv")
+    pure_data_set = pure_data_set.drop(columns=DROP_COLS)
 
     features = [
         "TLD",
@@ -34,19 +38,33 @@ def main():
         "NoOfAmpersandInURL",
         "NoOfOtherSpecialCharsInURL",
     ]
+    # X = input features, y = target column
+    X = pure_data_set[features]
+    y = pure_data_set["label"]  # <-- this is your target
+
+    # split into train/test
+    X_train, X_test, Y_train, Y_test = train_test_split(
+        X,
+        y,
+        test_size=0.2,
+        train_size=0.8,
+        random_state=42,  # optional but useful for reproducibility
+    )
+    plot_correlation(X_test, Y_test)
 
 
-def plot_correlation(data_set):
-    drop_cols = ["FILENAME", "URL", "Domain", "Title"]
-    data_set = data_set.drop(columns=drop_cols)
-
+def plot_correlation(data_set, labels):
     categorical_cols = ["TLD", "Robots"]
     le = LabelEncoder()
     for col in categorical_cols:
         if col in data_set.columns:
             data_set[col] = le.fit_transform(data_set[col].astype(str))
 
-    correlations = data_set.corr()["label"].sort_values(ascending=False)
+    # combine features + label so correlation works
+    df = data_set.copy()
+    df["label"] = labels
+
+    correlations = df.corr()["label"].sort_values(ascending=False)
 
     # Plot correlations
     plt.figure(figsize=(8, 12))
