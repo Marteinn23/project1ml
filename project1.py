@@ -1,12 +1,41 @@
+"""
+Authors: Marteinn, Teitur, Tryggvi
+"""
+
 import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+
+# sklearn modules
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+## classifiers
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
 
 
 def main():
-    data_set = pd.read_csv("project1ml/dataset/PhiUSIIL_Phishing_URL_Dataset.csv"
+    pure_data_set = pd.read_csv("project1ml/dataset/PhiUSIIL_Phishing_URL_Dataset.csv")
+
+    features = [
+        "TLD",
+        "TLDLength",
+        "URLLength",
+        "IsDomainIP",
+        "NoOfSubDomain",
+        "IsHTTPS",
+        "NoOfDegitsInURL",
+        "NoOfEqualsInURL",
+        "NoOfQMarkInURL",
+        "NoOfAmpersandInURL",
+        "NoOfOtherSpecialCharsInURL",
+    ]
+
+    pandas
 
 
 def plot_correlation(data_set):
