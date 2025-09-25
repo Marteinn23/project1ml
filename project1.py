@@ -14,16 +14,26 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 
 ## classifiers
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import BernoulliNB
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 
+from https_model import simple_https_guesser
+from naive_bayes import test_naive_bayes
 
 DROP_COLS = ["FILENAME", "URL", "Domain", "Title"]
-
 
 def main():
     pure_data_set = pd.read_csv("dataset/PhiUSIIL_Phishing_URL_Dataset.csv")
     pure_data_set = pure_data_set.drop(columns=DROP_COLS)
+    pure_data_set["label"] = pure_data_set["label"].map({0: 1, 1: 0})
+
+    # CORRECT WAY: Count rows where label=0 AND IsHTTPS=1
+    count_https_phishing = len(pure_data_set[(pure_data_set["label"] == 0) & (pure_data_set["IsHTTPS"] == 1)])
+    print(f"Number of phishing sites (label=0) that use HTTPS: {count_https_phishing}")
+    count_http_phishing = len(pure_data_set[(pure_data_set["label"] == 1) & (pure_data_set["IsHTTPS"] == 1)])
+    print(f"Number of phishing sites (label=0) that use HTTPS: {count_http_phishing}")
+
 
     features = [
         "TLD",
@@ -38,19 +48,38 @@ def main():
         "NoOfAmpersandInURL",
         "NoOfOtherSpecialCharsInURL",
     ]
-    # X = input features, y = target column
     X = pure_data_set[features]
-    y = pure_data_set["label"]  # <-- this is your target
+    y = pure_data_set["label"]
 
     # split into train/test
-    X_train, X_test, Y_train, Y_test = train_test_split(
+    # careful to only use the test sets when we're ready!
+    X_train ,__X_test, y_train, __y_test = train_test_split(
         X,
         y,
         test_size=0.2,
         train_size=0.8,
-        random_state=42,  # optional but useful for reproducibility
+        random_state=42,
     )
-    plot_correlation(X_test, Y_test)
+
+    # Predict phishing if http. Else predict legitimate
+    simple_https_guesser(X_train, y_train)
+    results = test_naive_bayes(X_train, y_train)
+
+    # Try again, but with all of the features.
+    features = [col for col in pure_data_set.columns if col != "label"]
+    X = pure_data_set[features]
+    y = pure_data_set["label"]
+
+    X_train ,__X_test, y_train, __y_test = train_test_split(
+        X,
+        y,
+        test_size=0.2,
+        train_size=0.8,
+        random_state=42,
+    )
+
+    simple_https_guesser(X_train, y_train)
+    results = test_naive_bayes(X_train, y_train)
 
 
 def plot_correlation(data_set, labels):
