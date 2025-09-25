@@ -37,6 +37,7 @@ def main():
         "NoOfQMarkInURL",
         "NoOfAmpersandInURL",
         "NoOfOtherSpecialCharsInURL",
+        "DomainLength",
     ]
     # X = input features, y = target column
     X = pure_data_set[features]
