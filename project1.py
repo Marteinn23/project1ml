@@ -13,6 +13,7 @@ from decision_tree_full import decision_tree_with_gridsearch
 from models import PHISURL_NaiveBayes, PHISURL_NeuralNetwork, PHISURL_RandomForest
 
 from utils import plot_confusion_matrix
+from input_to_test import preprocess_single_url
 
 
 DROP_COLS = ["FILENAME", "URL", "Domain", "Title"]
@@ -61,7 +62,7 @@ def main():
     X = extract_tld_features(X)
 
     features = [
-        "TLDFrequency",
+        #"TLDFrequency",
         "TLDLength",
         "URLLength",
         "IsDomainIP",
@@ -88,21 +89,24 @@ def main():
     # Individual model grid searches
     best_models = {}
     
-    final_classifier = None
-    if input("Decision tree constrained? ") == "y":
-        decision_tree_with_gridsearch(X_train_constrained, y_train_constrained, False)
-    if input("Random Forest grid search? ") == "y":
-        best_models["rf"] = random_forest_gridsearch(X_train_constrained, y_train_constrained, X_test_constrained, y_test_constrained)
+    print("Decision tree constrained? ") == "y"
+    estimator = decision_tree_with_gridsearch(X_train_constrained, y_train_constrained, False)
+    pred = estimator.predict(preprocess_single_url("https://www.sciencedirect.com/science/article/pii/S0167404823004558?via%3Dihub#se0250"))
+    # Funnily enough, it thinks the URL to the PhisUSIIL paper is a phishing scam
+    print(pred)
+        
+    print("Random Forest grid search? ")
+    best_models["rf"] = random_forest_gridsearch(X_train_constrained, y_train_constrained, X_test_constrained, y_test_constrained)
     
-    if input("Neural Network grid search? ") == "y":
-        best_models["nn"] = neural_network_gridsearch(X_train_constrained, y_train_constrained, X_test_constrained, y_test_constrained)
+    print("Neural Network grid search? ")
+    best_models["nn"] = neural_network_gridsearch(X_train_constrained, y_train_constrained, X_test_constrained, y_test_constrained)
     
-    if input("Naive Bayes grid search? ") == "y":
-        best_models["nb"] = naive_bayes_gridsearch(X_train_constrained, y_train_constrained, X_test_constrained, y_test_constrained)
+    print("Naive Bayes grid search? ")
+    best_models["nb"] = naive_bayes_gridsearch(X_train_constrained, y_train_constrained, X_test_constrained, y_test_constrained)
 
     # Voting classifier with best models
-    if input("Voting classifier grid search? ") == "y":
-        final_classifier = voting_classifier_gridsearch(X_train_constrained, y_train_constrained, X_test_constrained, y_test_constrained, best_models)
+    print("Voting classifier grid search? ")
+    final_classifier = voting_classifier_gridsearch(X_train_constrained, y_train_constrained, X_test_constrained, y_test_constrained, best_models)
 
     # Now with out final tuned classifier we can check how it handles unseen data.
     pure_data_set = pd.read_csv("dataset/proccessed_urls.csv").drop("URL", axis=1)
