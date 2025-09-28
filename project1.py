@@ -92,6 +92,9 @@ def main():
     # Individual model grid searches
     best_models = {}
     
+    final_classifier = None
+    if input("Decision tree constrained? ") == "y":
+        decision_tree_with_gridsearch(X_train_constrained, y_train_constrained, False)
     if input("Random Forest grid search? ") == "y":
         best_models["rf"] = random_forest_gridsearch(X_train_constrained, y_train_constrained, X_test_constrained, y_test_constrained)
     
@@ -103,7 +106,17 @@ def main():
 
     # Voting classifier with best models
     if input("Voting classifier grid search? ") == "y":
-        voting_classifier_gridsearch(X_train_constrained, y_train_constrained, X_test_constrained, y_test_constrained, best_models)
+        final_classifier = voting_classifier_gridsearch(X_train_constrained, y_train_constrained, X_test_constrained, y_test_constrained, best_models)
+
+    # Now with out final tuned classifier we can check how it handles unseen data.
+    pure_data_set = pd.read_csv("dataset/proccessed_urls.csv").drop("URL", axis=1)
+    pure_data_set["Label"] = pure_data_set["Label"].map({0: 1, 1: 0})
+    X = extract_tld_features(pure_data_set)
+    X = X[features]
+    y = pure_data_set["Label"]
+
+    y_pred = final_classifier.predict(X)
+    plot_confusion_matrix(y, y_pred)
 
 
 def random_forest_gridsearch(X_train, y_train, X_test, y_test):

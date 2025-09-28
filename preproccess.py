@@ -32,7 +32,7 @@ def main():
     data = no_of_sub_domain(data)
 
     # Convert dictionary to CSV
-    csv_filename = "dataset\proccessed_urls.csv"
+    csv_filename = "dataset/proccessed_urls.csv"
     dict_to_csv(data, csv_filename)
     print(f"Data successfully exported to {csv_filename}")
 
@@ -92,7 +92,7 @@ def IsHTTPS_Process(data: dict):
         elif check.startswith("http"):
             data[url]["IsHTTPS"] = 0
         else:
-            data[url]["IsHTTPS"] = 2
+            data[url]["IsHTTPS"] = 2 # unsure
     return data
 
 
@@ -140,7 +140,6 @@ def no_of_sub_domain(data: dict):
 
 
 def print_data(data: dict):
-    # Clear the file and optionally write new content
     with open("print.txt", "w") as file:
         for url in data.keys():
             file.write("\n")
@@ -151,15 +150,6 @@ def print_data(data: dict):
 
 
 def is_valid_ip(ip_string):
-    """
-    Checks if a given string is a valid IPv4 or IPv6 address.
-
-    Args:
-        ip_string: The string to validate.
-
-    Returns:
-        True if the string is a valid IP address, False otherwise.
-    """
     try:
         ipaddress.ip_address(ip_string)
         return True
@@ -168,14 +158,6 @@ def is_valid_ip(ip_string):
 
 
 def dict_to_csv(data: dict, filename: str):
-    """
-    Converts the dictionary of URL features to a CSV file.
-
-    Args:
-        data: Dictionary where keys are URLs and values are dictionaries of features
-        filename: Name of the CSV file to create
-    """
-
     records = []
     for url, features in data.items():
         record = {"URL": url}

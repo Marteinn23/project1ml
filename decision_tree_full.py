@@ -14,11 +14,12 @@ from sklearn.model_selection import train_test_split
 
 from utils import print_header, plot_confusion_matrix
 
-def decision_tree_with_gridsearch(X: pd.DataFrame, y: pd.DataFrame) -> GridSearchCV:
+def decision_tree_with_gridsearch(X: pd.DataFrame, y: pd.DataFrame, drop = True) -> GridSearchCV:
     """
     A basic decision tree with gridsearch
     """
-    X = X.drop("TLD", axis=1)
+    if drop:
+        X = X.drop("TLD", axis=1)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     
     categorical_cols = X.select_dtypes(include=["object", "category"]).columns.tolist()
