@@ -23,13 +23,6 @@ import ipaddress
 
 
 def main():
-    # # Load the CSV file
-    # df = pd.read_csv("dataset\PhiUSIIL_Phishing_URL_Dataset.csv")
-
-    # # Print URL and number of special characters
-    # for _, row in df.iterrows():
-    #     print(row["URL"], row["NoOfSubDomain"])
-
     new_data_set = pd.read_csv("dataset/new_data_urls.csv")
     data = make_dict(new_data_set)
     data = is_domain_ip(data)
@@ -38,7 +31,10 @@ def main():
     data = No_of_digits_equal_qmark_amp(data)
     data = no_of_sub_domain(data)
 
-    print_data(data)
+    # Convert dictionary to CSV
+    csv_filename = "dataset\proccessed_urls.csv"
+    dict_to_csv(data, csv_filename)
+    print(f"Data successfully exported to {csv_filename}")
 
 
 def make_dict(new_data_set: dict):
@@ -169,6 +165,36 @@ def is_valid_ip(ip_string):
         return True
     except ValueError:
         return False
+
+
+def dict_to_csv(data: dict, filename: str):
+    """
+    Converts the dictionary of URL features to a CSV file.
+
+    Args:
+        data: Dictionary where keys are URLs and values are dictionaries of features
+        filename: Name of the CSV file to create
+    """
+
+    records = []
+    for url, features in data.items():
+        record = {"URL": url}
+        record.update(features)
+        records.append(record)
+
+    df = pd.DataFrame(records)
+
+    columns = ["URL"] + [col for col in df.columns if col != "URL" and col != "Label"]
+    if "Label" in df.columns:
+        columns.append("Label")
+
+    df = df[columns]
+    df.to_csv(filename, index=False)
+
+    print(f"Dataset shape: {df.shape}")
+    print(f"Columns: {list(df.columns)}")
+
+    return df
 
 
 if __name__ == "__main__":
