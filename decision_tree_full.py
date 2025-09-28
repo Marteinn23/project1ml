@@ -12,7 +12,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
 from sklearn.model_selection import train_test_split
 
-from utils import print_header
+from utils import print_header, plot_confusion_matrix
 
 def decision_tree_with_gridsearch(X: pd.DataFrame, y: pd.DataFrame) -> GridSearchCV:
     """
@@ -63,37 +63,21 @@ def decision_tree_with_gridsearch(X: pd.DataFrame, y: pd.DataFrame) -> GridSearc
     best_model = grid_search.best_estimator_
     y_pred = best_model.predict(X_test)
     accuracy = accuracy_score(y_test, y_pred)
-    cm = confusion_matrix(y_test, y_pred)
 
     print_header("DECISION TREE GRID SEARCH RESULTS")
     print(f"Best Parameters: {grid_search.best_params_}")
     print(f"Best Cross-validation Score: {grid_search.best_score_:.4f}")
     print(f"Test Accuracy: {accuracy:.4f}")
-    
-    
-    plt.figure(figsize=(8, 6))
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
-                xticklabels=["Predicted benign URL (0)", "Predicted phishing URL (1)"],
-                yticklabels=["Actual benign (0)", "Actual phishing, (1)"])
-    plt.title('Confusion Matrix')
-    plt.ylabel('Actual')
-    plt.xlabel('Predicted')
-    plt.tight_layout()
-    plt.show()
 
-    # Visualizing the tree
+    plot_confusion_matrix(y_test, y_pred, "Decision tree")
+    
     print_header("DECISION TREE VISUALIZER")
     fitted_tree = best_model.named_steps["classifier"]
     preprocessor = best_model.named_steps["preprocessor"]
     feature_names = preprocessor.get_feature_names_out()
     
-    # Get class names (if you have them, otherwise use string representation)
     class_names = [str(cls) for cls in fitted_tree.classes_]
-    
-    # Create a larger figure for the tree
     plt.figure(figsize=(20, 10))
-    
-    # Plot the decision tree
     plot_tree(
         fitted_tree,
         feature_names=feature_names,

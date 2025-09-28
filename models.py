@@ -3,14 +3,19 @@ from sklearn.naive_bayes import BernoulliNB
 from sklearn.ensemble import RandomForestClassifier
 
 class PHISURL_NeuralNetwork(MLPClassifier):
-    def __init__(self, hidden_layer_sizes=(50,), activation="relu", 
-                 alpha=0.0001, max_iter=200, random_state=42):
+    def __init__(
+            self, 
+            hidden_layer_sizes=(50,), 
+            activation="relu", 
+            alpha=0.0001,
+            learning_rate_init=0.001,
+        ):
         super().__init__(
             hidden_layer_sizes=hidden_layer_sizes,
             activation=activation,
             alpha=alpha,
-            max_iter=max_iter,
-            random_state=random_state
+            learning_rate_init=learning_rate_init,
+            random_state=42
         )
 
 class PHISURL_NaiveBayes(BernoulliNB):
@@ -18,9 +23,17 @@ class PHISURL_NaiveBayes(BernoulliNB):
         super().__init__(alpha=alpha)
 
 class PHISURL_RandomForest(RandomForestClassifier):
-    def __init__(self, n_estimators=100, max_depth=None, random_state=42):
+    def __init__(
+            self, 
+            n_estimators=100, 
+            max_depth=None, 
+            min_samples_split=2,
+            min_samples_leaf=2,
+        ):
         super().__init__(
             n_estimators=n_estimators,
             max_depth=max_depth,
-            random_state=random_state
+            min_samples_split=min_samples_split,
+            min_samples_leaf=min_samples_leaf,
+            random_state=42
         )

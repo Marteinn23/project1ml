@@ -8,7 +8,7 @@ from utils import print_header
 def baseline_model(X: pd.DataFrame, y: pd.DataFrame):
     """
     # The baseline model for comparisons
-    Any model made should outperform this
+    Simply guesses the class that's likely
     """
     
     # Since this is a binary classification, we can take a sum and choose the more frequent label
