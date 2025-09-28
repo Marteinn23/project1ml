@@ -25,16 +25,12 @@ def decision_tree_with_gridsearch(X: pd.DataFrame, y: pd.DataFrame, drop = True)
     categorical_cols = X.select_dtypes(include=["object", "category"]).columns.tolist()
     numerical_cols = X.select_dtypes(include=[np.number]).columns.tolist()
     
-    print(f"Categorical columns: {categorical_cols}")
-    print(f"Numerical columns: {numerical_cols}")
-    
-    # We have to preprocess the categorical data
-    #   -> TLD
-    # There is not natural ordering, so OneHotEncoding is the first idea
+    # Honestly this is mostly done for the tree visualization
+    # This does no sort of preprocessing on the data, everything is numerical at this stage
     preprocessor = ColumnTransformer(
         transformers=[
-            ("num", "passthrough", numerical_cols), # numbers can stay as-is
-            ("cat", OneHotEncoder(handle_unknown="infrequent_if_exist",  drop="first"), categorical_cols)
+            ("num", "passthrough", numerical_cols),
+            ("cat", OneHotEncoder(), categorical_cols)
         ],
         remainder="drop"
     )
@@ -94,20 +90,7 @@ def decision_tree_with_gridsearch(X: pd.DataFrame, y: pd.DataFrame, drop = True)
     plt.tight_layout()
     plt.show()
     
-    # Optional: Print some additional tree information
     print(f"Tree Depth: {fitted_tree.get_depth()}")
     print(f"Number of Leaves: {fitted_tree.get_n_leaves()}")
-    print(f"Number of Features Used: {np.sum(fitted_tree.feature_importances_ > 0)}")
-    
-    # Optional: Show feature importance (this requires the preprocessed feature names)
-    if len(feature_names) <= 30:  # Only show if not too many features
-        importances = fitted_tree.feature_importances_
-        indices = np.argsort(importances)[::-1]
-        
-        print("\nTop Feature Importances:")
-        for i in range(min(10, len(indices))):
-            if importances[indices[i]] > 0:
-                print(f"{feature_names[indices[i]]}: {importances[indices[i]]:.4f}")
-
     
     return grid_search

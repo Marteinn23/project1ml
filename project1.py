@@ -1,13 +1,8 @@
-"""
-Authors: Marteinn, Teitur, Tryggvi
-"""
-
 import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-# sklearn modules
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import make_scorer, confusion_matrix, precision_recall_fscore_support
@@ -25,13 +20,14 @@ DROP_COLS = ["FILENAME", "URL", "Domain", "Title"]
 def main():
     pure_data_set = pd.read_csv("dataset/PhiUSIIL_Phishing_URL_Dataset.csv")
     pure_data_set = pure_data_set.drop(columns=DROP_COLS)
+    # 0 to 1 and 1 to 0
+    # This means that Phishing is 1
+    # Safe is 0
     pure_data_set["label"] = pure_data_set["label"].map({0: 1, 1: 0})
 
     X = pure_data_set.drop("label", axis=1)
     y = pure_data_set["label"]
 
-    # split into train/test
-    # careful to only use the test sets when we're ready!
     X_train , X_test, y_train, y_test = train_test_split(
         X,
         y,
@@ -160,7 +156,7 @@ def random_forest_gridsearch(X_train, y_train, X_test, y_test):
 
 
 def neural_network_gridsearch(X_train, y_train, X_test, y_test):
-    """Perform grid search for Neural Network model"""
+    """Grid search for Neural Network model"""
     print("Performing Neural Network grid search...")
     
     nn_param_grid = {
@@ -287,7 +283,6 @@ def voting_classifier_gridsearch(X_train, y_train, X_test, y_test, best_models):
     print("Voting Classifier - Best score:", grid.best_score_)
 
     y_pred = grid.predict(X_test)
-    # Plot confusion matrix
     cm = plot_confusion_matrix(y_test, y_pred, "Voting Ensemble")
 
     precision, recall, f1, support = precision_recall_fscore_support(
@@ -301,7 +296,7 @@ def voting_classifier_gridsearch(X_train, y_train, X_test, y_test, best_models):
     return grid.best_estimator_
 
 
-def fn_focused_scorer(y_true, y_pred, fn_weight=100.0, fp_weight=1.0):
+def fn_focused_scorer(y_true, y_pred, fn_weight=5.0, fp_weight=1.0):
     cm = confusion_matrix(y_true, y_pred)
     tn, fp, fn, tp = cm.ravel()
     

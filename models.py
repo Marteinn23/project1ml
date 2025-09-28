@@ -2,6 +2,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.naive_bayes import BernoulliNB
 from sklearn.ensemble import RandomForestClassifier
 
+# Simple wrappers around the base models we'll be using
 class PHISURL_NeuralNetwork(MLPClassifier):
     def __init__(
             self, 
