@@ -1,7 +1,5 @@
 import pandas as pd
-import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
+
 
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.preprocessing import LabelEncoder
@@ -16,7 +14,7 @@ from src.baseline_model import baseline_model
 from src.decision_tree_full import decision_tree_with_gridsearch
 from src.models import PHISURL_NaiveBayes, PHISURL_NeuralNetwork, PHISURL_RandomForest
 
-from project1ml.src.utils import plot_confusion_matrix
+from utils import plot_confusion_matrix
 from src.input_to_test import preprocess_single_url
 
 
@@ -330,37 +328,6 @@ def fn_focused_scorer(y_true, y_pred, fn_weight=5.0, fp_weight=1.0):
     )
     return weighted_score
 
-
-def plot_correlation(data_set, labels):
-    categorical_cols = ["TLD", "Robots"]
-    le = LabelEncoder()
-    for col in categorical_cols:
-        if col in data_set.columns:
-            data_set[col] = le.fit_transform(data_set[col].astype(str))
-
-    # combine features + label so correlation works
-    df = data_set.copy()
-    df["label"] = labels
-
-    correlations = df.corr()["label"].sort_values(ascending=False)
-
-    # Plot correlations
-    plt.figure(figsize=(8, 12))
-    sns.barplot(y=correlations.index, x=correlations.values, palette="coolwarm")
-    plt.axvline(x=0, color="k", linestyle="--")
-    plt.title("Feature Correlations with Label")
-    plt.tight_layout()
-    plt.show()
-
-    # Heatmap of top correlations
-    top_features = correlations.abs().sort_values(ascending=False).head(15).index
-    plt.figure(figsize=(10, 8))
-    sns.heatmap(
-        data_set[top_features].corr(), annot=True, cmap="coolwarm", center=0, fmt=".2f"
-    )
-    plt.title("Top Feature Correlations")
-    plt.show()
-    return
 
 
 if __name__ == "__main__":
