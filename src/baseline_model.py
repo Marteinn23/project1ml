@@ -3,7 +3,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 from sklearn.metrics import accuracy_score, confusion_matrix
-from utils.utils import print_header
+from utils import print_header
 
 
 def baseline_model(X: pd.DataFrame, y: pd.DataFrame):

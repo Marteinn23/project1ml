@@ -12,7 +12,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
 from sklearn.model_selection import train_test_split
 
-from utils.utils import print_header, plot_confusion_matrix
+from utils import print_header, plot_confusion_matrix
 
 
 def decision_tree_with_gridsearch(

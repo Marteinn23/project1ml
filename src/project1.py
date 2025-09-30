@@ -16,7 +16,7 @@ from src.baseline_model import baseline_model
 from src.decision_tree_full import decision_tree_with_gridsearch
 from src.models import PHISURL_NaiveBayes, PHISURL_NeuralNetwork, PHISURL_RandomForest
 
-from utils.utils import plot_confusion_matrix
+from project1ml.src.utils import plot_confusion_matrix
 from src.input_to_test import preprocess_single_url
 
 
