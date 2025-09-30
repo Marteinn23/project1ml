@@ -31,7 +31,6 @@ def main():
     # Convert dictionary to CSV
     csv_filename = "dataset/proccessed_urls.csv"
     dict_to_csv(data, csv_filename)
-    print(f"Data successfully exported to {csv_filename}")
 
 
 def make_dict(new_data_set: dict):
@@ -40,10 +39,9 @@ def make_dict(new_data_set: dict):
     url_list = new_data_set["url"].copy()
     for i, url in enumerate(url_list):
         url = str(url)
-        if url[0] == '"':
-            print(url)
+        if url[0] == '"' or url[0] == "'":
             url_list[i] = url[1:]
-        if url[-1] == '"':
+        if url[-1] == '"' or url[-1] == "'":
             url = url[:-1]
         url_list[i] = url
 
@@ -89,7 +87,7 @@ def IsHTTPS_Process(data: dict):
         elif check.startswith("http"):
             data[url]["IsHTTPS"] = 0
         else:
-            data[url]["IsHTTPS"] = 2 # unsure
+            data[url]["IsHTTPS"] = 2  # unsure
     return data
 
 
@@ -123,27 +121,11 @@ def No_of_digits_equal_qmark_amp(data: dict):
 
 def no_of_sub_domain(data: dict):
     """Counts the number of sub domains by getting the subdomain string from TLDExtract, splitting the string by . and counting the length."""
-    index = 0
     for url in data.keys():
         tld_check = tldextract.extract(url)
         if tld_check.subdomain != "":
             data[url]["NoOfSubDomain"] = len(tld_check.subdomain.split("."))
-            if index == 0:
-                print(url)
-                print(tld_check.subdomain)
-                print(data[url]["NoOfSubDomain"])
-                index = 1
     return data
-
-
-def print_data(data: dict):
-    with open("print.txt", "w") as file:
-        for url in data.keys():
-            file.write("\n")
-            file.write(f"{url}: ")
-            for values in data[url].keys():
-                file.write(f"      {values}: {data[url][values]}")
-        file.write("\n")
 
 
 def is_valid_ip(ip_string):
@@ -169,9 +151,6 @@ def dict_to_csv(data: dict, filename: str):
 
     df = df[columns]
     df.to_csv(filename, index=False)
-
-    print(f"Dataset shape: {df.shape}")
-    print(f"Columns: {list(df.columns)}")
 
     return df
 
