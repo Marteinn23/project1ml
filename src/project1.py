@@ -65,7 +65,7 @@ def main():
     X = extract_tld_features(X)
 
     features = [
-        # "TLDFrequency",
+        "TLDFrequency",
         "TLDLength",
         "URLLength",
         "IsDomainIP",
